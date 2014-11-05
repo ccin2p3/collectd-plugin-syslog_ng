@@ -8,7 +8,7 @@ AWK="awk"
 PLUGIN="syslog_ng"
 
 while :; do
-	$SUDO $SYSLOG_NG_CTL stats | $AWK -vinterval=$INTERVAL -vhost=$HOSTNAME -vplugin=$PLUGIN -F\; 'NR!=1 && $1 != "src.none" {if ($2 == "") { t=$3 } else {t=$2} printf "PUTVAL %s/%s-%s/derive-%s %s:%s interval=%s\n",host,plugin,t,$5,systime(),$6,interval}'
+	$SUDO $SYSLOG_NG_CTL stats | $AWK -vinterval=$INTERVAL -vhost=$HOSTNAME -vplugin=$PLUGIN -F\; 'NR!=1 && $1 != "src.none" {if ($2 == "") { t=$3 } else {t=$2} {}if ($5 == "stored") {type="gauge"} else {type="derive"} printf "PUTVAL %s/%s-%s/%s-%s %s:%s interval=%s\n",host,plugin,t,type,$5,systime(),$6,interval}'
 	sleep $INTERVAL
 done
 
